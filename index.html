@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>5个思维误区 · 道法术器拆解</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Noto+Serif+SC:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Playfair Display"', '"Noto Serif SC"', 'serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: { 400: '#00d4aa', 500: '#00b894' },
+            accent: '#ff6b6b',
+            dark: '#0a0a0a',
+            'card-bg': 'rgba(255, 255, 255, 0.03)',
+            'card-hover': 'rgba(255, 255, 255, 0.05)',
+            'border-light': 'rgba(255, 255, 255, 0.08)',
+          },
+          fontSize: {
+            'giant': { DEFAULT: '4.5rem', sm: '5.5rem' },
+            'huge': { DEFAULT: '3.5rem', sm: '4rem' },
+            'title': { DEFAULT: '2.5rem', sm: '3rem' },
+            'body': '1.1875rem',
+            'small': '0.875rem',
+            'tiny': '0.75rem',
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --brand: #00d4aa;
+      --accent: #ff6b6b;
+      --dark: #0a0a0a;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--dark);
+      color: #ffffff;
+      font-family: 'Playfair Display', 'Noto Serif SC', serif;
+      overflow: hidden;
+      cursor: none;
+    }
+
+    /* Custom Cursor */
+    .cursor-dot {
+      position: fixed; width: 6px; height: 6px;
+      background: #fff; border-radius: 50%;
+      pointer-events: none; z-index: 9999999;
+      mix-blend-mode: difference;
+    }
+
+    /* Star Trail Canvas */
+    #trailCanvas {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 9999998;
+    }
+
+    /* Mesh Gradient Background */
+    .mesh-bg {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background:
+        radial-gradient(800px circle at 20% 30%, rgba(0,212,170,0.15), transparent 45%),
+        radial-gradient(600px circle at 80% 70%, rgba(78,205,196,0.10), transparent 45%),
+        radial-gradient(400px circle at 50% 20%, rgba(255,107,107,0.08), transparent 35%),
+        var(--dark);
+      z-index: -2;
+      animation: gradient-shift 20s ease-in-out infinite;
+    }
+
+    @keyframes gradient-shift {
+      0%, 100% {
+        background:
+          radial-gradient(800px circle at 20% 30%, rgba(0,212,170,0.15), transparent 45%),
+          radial-gradient(600px circle at 80% 70%, rgba(78,205,196,0.10), transparent 45%),
+          radial-gradient(400px circle at 50% 20%, rgba(255,107,107,0.08), transparent 35%),
+          var(--dark);
+      }
+      25% {
+        background:
+          radial-gradient(800px circle at 60% 50%, rgba(0,212,170,0.15), transparent 45%),
+          radial-gradient(600px circle at 20% 80%, rgba(78,205,196,0.10), transparent 45%),
+          radial-gradient(400px circle at 80% 10%, rgba(255,107,107,0.08), transparent 35%),
+          var(--dark);
+      }
+      50% {
+        background:
+          radial-gradient(800px circle at 70% 20%, rgba(0,212,170,0.15), transparent 45%),
+          radial-gradient(600px circle at 30% 60%, rgba(78,205,196,0.10), transparent 45%),
+          radial-gradient(400px circle at 10% 70%, rgba(255,107,107,0.08), transparent 35%),
+          var(--dark);
+      }
+      75% {
+        background:
+          radial-gradient(800px circle at 40% 80%, rgba(0,212,170,0.15), transparent 45%),
+          radial-gradient(600px circle at 90% 30%, rgba(78,205,196,0.10), transparent 45%),
+          radial-gradient(400px circle at 60% 40%, rgba(255,107,107,0.08), transparent 35%),
+          var(--dark);
+      }
+    }
+
+    /* Grain Texture */
+    .grain {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.06; pointer-events: none; z-index: 0;
+      animation: grain-shift 8s steps(10) infinite;
+    }
+
+    @keyframes grain-shift {
+      0%, 100% { transform: translate(0, 0); }
+      10% { transform: translate(-5%, -5%); }
+      20% { transform: translate(5%, 5%); }
+      30% { transform: translate(-3%, 3%); }
+      40% { transform: translate(3%, -3%); }
+      50% { transform: translate(-2%, -2%); }
+      60% { transform: translate(2%, 2%); }
+      70% { transform: translate(-1%, 1%); }
+      80% { transform: translate(1%, -1%); }
+      90% { transform: translate(0, 0); }
+    }
+
+    /* Slides */
+    .slide {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; visibility: hidden;
+      transition: opacity 0.8s ease, visibility 0.8s ease, filter 0.8s ease;
+      padding: 4rem 6rem;
+      filter: blur(0);
+    }
+    .slide.active { opacity: 1; visibility: visible; }
+    .slide.blurred { filter: blur(8px); }
+
+    /* Typography */
+    .slide h1 {
+      font-size: 4.5rem; font-weight: 600; line-height: 1.1;
+      letter-spacing: -0.03em; margin-bottom: 1.5rem;
+    }
+    .slide h2 {
+      font-size: 2.5rem; font-weight: 700; line-height: 1.2;
+      color: var(--brand); margin-bottom: 2rem;
+      letter-spacing: -0.02em;
+    }
+    .slide h3 {
+      font-size: 1.5rem; font-weight: 600; line-height: 1.3;
+      margin-bottom: 1rem; color: #fff;
+    }
+    .slide p, .slide li {
+      font-size: 1.1875rem; line-height: 1.8;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .slide ul { padding-left: 1.5rem; list-style: none; }
+    .slide li::before {
+      content: "▸"; color: var(--brand); margin-right: 0.75rem; font-weight: 700;
+    }
+
+    /* Quote */
+    .quote-block {
+      border-left: 3px solid var(--brand);
+      padding: 2rem 2.5rem;
+      margin: 2rem 0;
+      background: linear-gradient(90deg, rgba(0,212,170,0.08) 0%, transparent 100%);
+      font-style: italic; font-size: 1.5rem; line-height: 1.6;
+    }
+    .quote-block .highlight {
+      background: linear-gradient(135deg, var(--brand) 0%, var(--accent) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; font-weight: 700;
+    }
+
+    /* Data Card */
+    .data-card {
+      background: var(--card-bg); border: 1px solid var(--border-light);
+      border-radius: 16px; padding: 2rem 1.5rem;
+      text-align: center; backdrop-filter: blur(12px);
+      transition: all 0.4s ease; cursor: pointer;
+      position: relative; overflow: hidden;
+    }
+    .data-card::before {
+      content: ''; position: absolute; top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle, rgba(0,212,170,0.1) 0%, transparent 60%);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .data-card:hover::before { opacity: 1; }
+    .data-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(0,212,170,0.5);
+      box-shadow: 0 20px 60px rgba(0,212,170,0.15);
+    }
+    .data-num {
+      font-size: 4rem; font-weight: 800; line-height: 1;
+      background: linear-gradient(135deg, var(--brand) 0%, var(--accent) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 0.5rem;
+    }
+    .data-label {
+      font-size: 0.875rem; color: rgba(255,255,255,0.5);
+      text-transform: uppercase; letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+    }
+    .data-desc {
+      font-size: 0.8125rem; color: rgba(255,255,255,0.4);
+      line-height: 1.5;
+    }
+
+    /* Highlight Box */
+    .highlight-box {
+      background: rgba(0,212,170,0.08);
+      border: 1px solid rgba(0,212,170,0.2);
+      border-radius: 20px;
+      padding: 2.5rem;
+      margin: 2rem 0;
+      position: relative; overflow: hidden;
+    }
+    .highlight-box::after {
+      content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent 0%, rgba(0,212,170,0.05) 50%, transparent 100%);
+      animation: shimmer 6s infinite;
+    }
+    @keyframes shimmer {
+      0%,100% { transform: translateX(-100%); }
+      50% { transform: translateX(100%); }
+    }
+
+    /* Grid */
+    .col-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; width: 100%; max-width: 1400px; }
+    .col-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; width: 100%; max-width: 1400px; }
+    .col-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; width: 100%; max-width: 1600px; }
+
+    /* Badge */
+    .badge {
+      display: inline-block; padding: 0.4rem 1rem;
+      background: rgba(0,212,170,0.12); border: 1px solid rgba(0,212,170,0.3);
+      border-radius: 999px; font-size: 0.75rem; color: var(--brand);
+      font-family: 'JetBrains Mono', monospace;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Skewed Card */
+    .skew-card {
+      position: relative;
+      transform: skewX(-2deg);
+      border-radius: 20px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.4s ease;
+    }
+    .skew-card:hover { transform: skewX(-2deg) translateY(-10px); }
+    .skew-card > * { transform: skewX(2deg); }
+
+    /* TOC */
+    .toc-sidebar {
+      position: fixed; top: 50%; right: 2rem; transform: translateY(-50%);
+      display: flex; flex-direction: column; gap: 0.75rem; z-index: 50;
+    }
+    .toc-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: rgba(255,255,255,0.2); cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .toc-dot.active { background: var(--brand); transform: scale(1.4); box-shadow: 0 0 12px var(--brand); }
+    .toc-dot:hover { background: rgba(0,212,170,0.6); }
+
+    /* Navigation */
+    .nav {
+      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 2rem; z-index: 50;
+    }
+    .nav-btn {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border-light);
+      color: #fff; font-size: 1.25rem; cursor: pointer;
+      transition: all 0.3s ease; display: flex; align-items: center; justify-content: center;
+    }
+    .nav-btn:hover {
+      background: var(--brand); border-color: var(--brand); color: var(--dark);
+    }
+    .nav-counter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.875rem; color: rgba(255,255,255,0.4);
+      letter-spacing: 0.1em;
+    }
+
+    /* Text utilities */
+    .text-brand { color: var(--brand) !important; }
+    .text-accent { color: var(--accent) !important; }
+    .text-muted { color: rgba(255,255,255,0.5); }
+
+    /* Giant text */
+    .giant-text {
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 600;
+      line-height: 0.95; letter-spacing: -0.04em;
+      background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.6) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Slide specific */
+    .slide-cover { text-align: center; }
+    .slide-cover .subtitle {
+      font-size: 1.5rem; color: rgba(255,255,255,0.6);
+      font-weight: 300; margin-bottom: 3rem;
+      letter-spacing: 0.1em;
+    }
+    .slide-cover .meta {
+      display: flex; justify-content: center; gap: 2rem; margin-top: 3rem;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.875rem;
+      color: rgba(255,255,255,0.4);
+    }
+
+    /* Stagger items */
+    .stagger-item { opacity: 0; transform: translateY(30px); }
+    .stagger-item.revealed { opacity: 1; transform: translateY(0); transition: all 0.6s ease; }
+
+    /* ============= MODAL DARK THEME ============= */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(10, 10, 10, 0.85);
+      backdrop-filter: blur(12px);
+      z-index: 999999;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; visibility: hidden;
+      transition: all 0.4s ease;
+    }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+    .modal-content {
+      background: rgba(20, 20, 20, 0.95);
+      border: 1px solid rgba(0,212,170,0.2);
+      border-radius: 24px;
+      max-width: 90%; max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      transform: scale(0.95) translateY(20px);
+      transition: all 0.4s ease;
+      box-shadow: 0 40px 120px rgba(0,0,0,0.8), 0 0 60px rgba(0,212,170,0.1);
+    }
+    .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
+    .modal-close {
+      position: absolute; top: 1.5rem; right: 1.5rem;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-light);
+      color: #fff; font-size: 1.5rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s ease; z-index: 10;
+    }
+    .modal-close:hover {
+      background: var(--accent); border-color: var(--accent);
+      transform: rotate(90deg); color: white;
+    }
+    .modal-body {
+      padding: 2.5rem;
+      font-family: 'Noto Serif SC', serif;
+      font-size: 1.125rem; line-height: 1.9; color: rgba(255,255,255,0.85);
+    }
+    .modal-body h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem; font-weight: 700;
+      color: var(--brand); margin-bottom: 1.5rem;
+    }
+    .modal-body h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem; font-weight: 600;
+      color: var(--accent); margin-bottom: 0.75rem;
+    }
+    .modal-body ul {
+      padding-left: 1.25rem; margin: 1rem 0;
+    }
+    .modal-body li {
+      margin-bottom: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      color: rgba(255,255,255,0.75);
+    }
+    .modal-body strong {
+      color: var(--brand);
+    }
+    .modal-highlight-box {
+      background: rgba(0,212,170,0.08);
+      border: 1px solid rgba(0,212,170,0.2);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cursor -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <canvas id="trailCanvas"></canvas>
+
+  <!-- Backgrounds -->
+  <div class="mesh-bg"></div>
+  <div class="grain"></div>
+  <canvas id="bgParticles"></canvas>
+
+  <!-- TOC -->
+  <div class="toc-sidebar" id="toc"></div>
+
+  <!-- Nav -->
+  <div class="nav">
+    <button class="nav-btn" id="prevBtn" onclick="prevSlide()">←</button>
+    <span class="nav-counter" id="counter">01 / 21</span>
+    <button class="nav-btn" id="nextBtn" onclick="nextSlide()">→</button>
+  </div>
+
+  <!-- Slides -->
+  <div class="slides-container" id="slides">
+
+    <!-- 1: COVER -->
+    <div class="slide slide-cover active" data-slide="0">
+      <div>
+        <span class="badge">道法术器拆解</span>
+        <h1 class="giant-text mb-0">5个影响你一辈子的<br>思维误区</h1>
+        <div class="subtitle mt-0">从感恩节的火鸡到探路与探树</div>
+        <div class="quote-block">
+          “人这一辈子，要么懒，要么在<span class="highlight">探树</span>，只有少数人在<span class="highlight">探路</span>。”
+        </div>
+        <div class="meta">
+          <span>贝贝 · 付费文章拆解</span>
+          <span>·</span>
+          <span>2025</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2: AUTHOR -->
+    <div class="slide" data-slide="1">
+      <div class="col-2">
+        <div>
+          <h2>作者是谁</h2>
+          <p class="text-muted mb-4">长期写「天气预报」的财经博主，拥有几十万读者。</p>
+          <ul>
+            <li>做过码农，经历过房价上涨周期</li>
+            <li>2008年实践乌龙指交易策略</li>
+            <li>2012年读到塔勒布杠铃策略，发现所见略同</li>
+            <li>用量化分析模型提炼读者留言的共性</li>
+          </ul>
+        </div>
+        <div>
+          <div class="quote-block" style="margin-top: 0;">
+            "火鸡科学家不是死于回溯测试的无效性，<br>
+            它死于<span class="highlight">两颗子弹</span>：<br>
+            <strong>周期长度</strong> + <strong>零容错</strong>。"
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3: DATA -->
+    <div class="slide" data-slide="2">
+      <h2 style="text-align: center; margin-bottom: 3rem;">问题有多严重</h2>
+      <div class="col-4">
+        <div class="data-card" onclick="openModal('modal1')">
+          <div class="data-num">40w+</div>
+          <div class="data-label">读者采样量</div>
+          <div class="data-desc">留言分析提炼出<br>5个系统性误区</div>
+        </div>
+        <div class="data-card" onclick="openModal('modal1')">
+          <div class="data-num">1/10</div>
+          <div class="data-label">测试周期覆盖</div>
+          <div class="data-desc">火鸡科学家只测了<br>自然寿命的1/10</div>
+        </div>
+        <div class="data-card" onclick="openModal('modal2')">
+          <div class="data-num">0%</div>
+          <div class="data-label">容错率</div>
+          <div class="data-desc">满仓 = 错一次就死<br>ALL IN的代价</div>
+        </div>
+        <div class="data-card" onclick="openModal('modal2')">
+          <div class="data-num">80w</div>
+          <div class="data-label">地球上的路</div>
+          <div class="data-desc">80亿人只有80万条路<br>绝大多数人没意识到</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4: AGENDA -->
+    <div class="slide" data-slide="3">
+      <h2>拆解结构</h2>
+      <div class="col-2">
+        <div>
+          <h3 style="color: var(--accent); margin-bottom: 1.5rem;">道法术器框架</h3>
+          <ul>
+            <li><strong class="text-brand">道</strong>：底层世界观（5误区本质）</li>
+            <li><strong class="text-brand">法</strong>：方法论（双重法则 + 杠铃）</li>
+            <li><strong class="text-brand">术</strong>：场景化应用策略</li>
+            <li><strong class="text-brand">器</strong>：工具武器库</li>
+          </ul>
+        </div>
+        <div>
+          <div class="highlight-box">
+            <h3 style="margin-top: 0;">5个误区层层递进</h3>
+            <ol style="padding-left: 1.25rem; margin: 0;">
+              <li>火鸡式回溯测试</li>
+              <li>本金决定收益错觉</li>
+              <li>滥用止损杠杆盈亏比</li>
+              <li>不懂「懂」的含义</li>
+              <li>把知识当认知</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5: Misunderstanding 1 -->
+    <div class="slide" data-slide="4">
+      <div style="position: absolute; top: 2rem; left: 3rem; right: 3rem; display: flex; justify-content: space-between; font-family: 'JetBrains Mono'; font-size: 0.75rem; color: rgba(255,255,255,0.4);">
+        <span>误区一</span>
+        <span>01 / 05</span>
+      </div>
+      <div style="max-width: 900px; margin: 0 auto; padding-top: 3rem;">
+        <h1 style="font-size: 3rem; margin-bottom: 2rem;">感恩节的火鸡</h1>
+        <div class="highlight-box">
+          <h3 style="margin-top: 0;">你的回溯测试是假的</h3>
+          <p style="font-size: 1.125rem; line-height: 1.9;">
+            火鸡科学家观察一年（生命周期10年），就宣布「11点必有食物」。
+            你以为你努力读书、努力工作、线性晋升是做回溯测试？
+            <strong style="color: var(--accent);">NO，这只是你看见范围内的随机抽样。</strong>
+          </p>
+        </div>
+        <div class="col-2" style="margin-top: 2rem; gap: 1.5rem;">
+          <div>
+            <h4 style="color: var(--accent); margin-bottom: 1rem;">两颗子弹</h4>
+            <ul style="font-size: 1rem; line-height: 1.8;">
+              <li><strong>周期长度</strong>：测试覆盖必须 ≥ 2倍生命周期</li>
+              <li><strong>零容错</strong>：满仓 = 错一次就死</li>
+            </ul>
+          </div>
+          <div>
+            <h4 style="color: var(--brand); margin-bottom: 1rem;">真解药</h4>
+            <p style="font-size: 1rem;">分仓：家庭对冲、多收入源、资产配置。<br>而不是「更努力」地做回溯测试。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6: BARBELL STRATEGY -->
+    <div class="slide" data-slide="5">
+      <h2 style="text-align: center; margin-bottom: 1rem;">杠铃策略：用极小代价博极端收益</h2>
+      <p style="text-align: center; color: var(--brand); font-size: 1.25rem; margin-bottom: 3rem;">
+        收益大小不是本金制约的，是<span class="highlight">算法模型</span>在制约
+      </p>
+
+      <div class="col-2" style="gap: 3rem; align-items: stretch;">
+        <div class="skew-card" style="flex: 1; padding: 2.5rem; background: linear-gradient(135deg, rgba(255,107,107,0.12) 0%, rgba(255,107,107,0.05) 100%); border: 2px solid rgba(255,107,107,0.3);" onclick="openModal('modal-barbell-trad')">
+          <h3 style="color: var(--accent); transform: skewX(2deg); margin-top: 0; font-size: 1.75rem;">❌ 火鸡模式</h3>
+          <div style="font-size: 4rem; font-weight: 800; color: var(--accent); margin: 1.5rem 0; transform: skewX(2deg);">364天</div>
+          <p style="font-size: 1.125rem; transform: skewX(2deg);">
+            承担364天风险<br>
+            只为第365天吃饲料
+          </p>
+          <p style="font-size: 0.875rem; color: rgba(255,255,255,0.5); margin-top: 1rem; transform: skewX(2deg);">收益 × 本金</p>
+        </div>
+
+        <div class="skew-card" style="flex: 1; padding: 2.5rem; background: linear-gradient(135deg, rgba(0,212,170,0.12) 0%, rgba(0,212,170,0.05) 100%); border: 2px solid rgba(0,212,170,0.4);" onclick="openModal('modal-barbell-right')">
+          <h3 style="color: var(--brand); transform: skewX(2deg); margin-top: 0; font-size: 1.75rem;">✅ 吃鸡模式</h3>
+          <div style="font-size: 4rem; font-weight: 800; color: var(--brand); margin: 1.5rem 0; transform: skewX(2deg);">1天</div>
+          <p style="font-size: 1.125rem; transform: skewX(2deg);">
+            只承担1天风险<br>
+            抓感恩节那只火鸡
+          </p>
+          <p style="font-size: 0.875rem; color: rgba(255,255,255,0.5); margin-top: 1rem; transform: skewX(2deg);">收益 = f(算法模型)</p>
+        </div>
+      </div>
+
+      <div class="quote-block" style="max-width: 900px; margin: 2rem auto 0; text-align: center; font-size: 1.25rem;">
+        “我也可以只承担1天的风险，去吃那只鸡本身呢？<br>
+        这种逆向思维，启发不亚于牛顿被苹果砸到。”
+      </div>
+    </div>
+
+    <!-- 7: TWO WORLDS -->
+    <div class="slide" data-slide="6">
+      <h2 style="text-align: center; margin-bottom: 3rem;">金融分两大世界</h2>
+      <div class="col-2" style="gap: 2.5rem; align-items: stretch;">
+        <div style="border: 1px solid var(--accent); border-radius: 16px; padding: 2rem; background: rgba(255,107,107,0.05);">
+          <h3 style="text-align: center; color: var(--accent); margin-top: 0;">传统金融世界<br><span style="font-size: 0.875rem; color: rgba(255,255,255,0.5);">（金融 + 人性）</span></h3>
+          <ul style="margin: 1rem 0;">
+            <li>大部分身家在赌</li>
+            <li>需要止损、杠杆、盈亏比</li>
+            <li>必须「懂」一个行业/品种</li>
+            <li>分析K线、情绪、估值</li>
+          </ul>
+          <p class="text-muted" style="font-size: 0.875rem;">
+            99%散户在这里 → 需要「巴菲特式」的精深理解
+          </p>
+        </div>
+        <div style="border: 1px solid var(--brand); border-radius: 16px; padding: 2rem; background: rgba(0,212,170,0.05);">
+          <h3 style="text-align: center; color: var(--brand); margin-top: 0;">量化世界<br><span style="font-size: 0.875rem; color: rgba(255,255,255,0.5);">（数学 + 程序）</span></h3>
+          <ul style="margin: 1rem 0;">
+            <li>极小仓位（输得起的小钱）</li>
+            <li><strong>不需要止损</strong>（爆仓=止损）</li>
+            <li>不需要「懂」行业</li>
+            <li>只赚「数学认可」的钱</li>
+          </ul>
+          <p class="text-muted" style="font-size: 0.875rem;">
+            少数人在这里 → 作者（只懂数学）、塔勒布（数理统计专家）
+          </p>
+        </div>
+      </div>
+      <div class="quote-block" style="max-width: 900px; margin: 2rem auto 0; text-align: center;">
+        “止损、杠杆、盈亏比，只适用于『金融与人性结合』的传统金融模式。<br>
+        在量化世界里，这些概念本身<span class="highlight">不成立</span>。”
+      </div>
+    </div>
+
+    <!-- 8: TWO WORLDS DETAIL -->
+    <div class="slide" data-slide="7">
+      <div class="highlight-box" style="max-width: 1000px; margin: 0 auto; text-align: center;">
+        <h2 style="margin-top: 0;">巴菲特的「懂」是针对哪个世界？</h2>
+        <div class="col-2" style="gap: 2rem; margin-top: 2rem; text-align: left;">
+          <div style="background: rgba(255,107,107,0.08); padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--accent);">
+            <h4 style="color: var(--accent); margin: 0 0 0.5rem 0;">传统世界（大部分身家在赌）</h4>
+            <p style="margin: 0; font-size: 1rem;">
+              你必须「懂」才能给出合理的止损、杠杆、盈亏比。<br>
+              <em>不懂就别玩。</em>
+            </p>
+          </div>
+          <div style="background: rgba(0,212,170,0.08); padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--brand);">
+            <h4 style="color: var(--brand); margin: 0 0 0.5rem 0;">量化世界（极小仓位）</h4>
+            <p style="margin: 0; font-size: 1rem;">
+              你不需要「懂行业」，只需要「懂数学」。<br>
+              <em>玩得起的小钱，爆仓即止损。</em>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="quote-block" style="max-width: 800px; margin: 2rem auto 0; text-align: center;">
+        "你需要止损这件事本身，<br>
+        说明你还在<span class="highlight">吃饲料</span>，没转去吃鸡。"
+      </div>
+    </div>
+
+    <!-- 9: Tree vs Path -->
+    <div class="slide" data-slide="8">
+      <div style="position: absolute; top: 2rem; left: 3rem; right: 3rem; display: flex; justify-content: space-between; font-family: 'JetBrains Mono'; font-size: 0.75rem; color: rgba(255,255,255,0.4);">
+        <span>误区四 & 五</span>
+        <span>04 / 05</span>
+      </div>
+      <div style="max-width: 1000px; margin: 0 auto; padding-top: 3rem;">
+        <h2 style="margin-bottom: 1rem;">「懂」的本质：探路 vs 探树</h2>
+        <p style="color: var(--brand); font-size: 1.25rem; margin-bottom: 2rem;">认知 ≠ 知识，路径 ≠ 元素</p>
+
+        <div class="col-2" style="gap: 2rem; text-align: center;">
+          <div style="padding: 2rem; border: 2px solid var(--accent); border-radius: 20px; background: rgba(255,107,107,0.05);">
+            <h3 style="color: var(--accent); margin-top: 0; font-size: 1.75rem;">🌳 探树</h3>
+            <div style="font-size: 2.5rem; margin: 1.5rem 0; font-family: 'JetBrains Mono'; opacity: 0.3;">A1-A2-...-An</div>
+            <p style="font-size: 1rem; margin-bottom: 1rem;">收集知识点</p>
+            <p style="font-size: 0.875rem; color: rgba(255,255,255,0.5);">
+              东吴腐儒 • 寻章摘句<br>皓首穷经
+            </p>
+          </div>
+
+          <div style="padding: 2rem; border: 2px solid var(--brand); border-radius: 20px; background: rgba(0,212,170,0.08);">
+            <h3 style="color: var(--brand); margin-top: 0; font-size: 1.75rem;">🛤️ 探路</h3>
+            <div style="font-size: 2.5rem; margin: 1.5rem 0; font-family: 'JetBrains Mono'; opacity: 0.3;">A301 → B507 → D1533</div>
+            <p style="font-size: 1rem; margin-bottom: 1rem;">打通路径</p>
+            <p style="font-size: 0.875rem; color: rgba(255,255,255,0.5);">
+              刘备三顾茅庐 • 遍历试错<br>带着目标倒推KPI
+            </p>
+          </div>
+        </div>
+
+        <div class="highlight-box" style="margin-top: 2rem;">
+          <p style="text-align: center; font-size: 1.125rem; line-height: 1.8;">
+            树元素（知识点）<span class="text-muted">不值钱</span><br>
+            路径组合（解决方案）<span class="text-brand">才值钱</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10: TRANSFERABILITY -->
+    <div class="slide" data-slide="9">
+      <h2 style="text-align: center; margin-bottom: 3rem;">跨界为什么能成功？</h2>
+      <div class="col-2" style="gap: 2rem; max-width: 1100px; margin: 0 auto;">
+        <div class="data-card" onclick="openModal('modal-transfer-fail')" style="border-color: var(--accent);">
+          <div style="font-size: 2.5rem; margin-bottom: 1rem;">❌</div>
+          <h3 style="color: var(--accent); font-size: 1.25rem; margin-bottom: 0.75rem;">知识迁移失败</h3>
+          <p style="font-size: 0.9375rem; margin-bottom: 0.5rem;">可口可乐技术专家转销售</p>
+          <p style="font-size: 0.875rem; color: rgba(255,255,255,0.5);">
+            「我懂糖水配方、营销套路」<br>换品类 → 抓瞎
+          </p>
+        </div>
+        <div class="data-card" onclick="openModal('modal-transfer-success')" style="border-color: var(--brand);">
+          <div style="font-size: 2.5rem; margin-bottom: 1rem;">✅</div>
+          <h3 style="color: var(--brand); font-size: 1.25rem; margin-bottom: 0.75rem;">能力迁移成功</h3>
+          <p style="font-size: 0.9375rem; margin-bottom: 0.5rem;">优秀老师转销售</p>
+          <p style="font-size: 0.875rem; color: rgba(255,255,255,0.5);">
+            「我懂挖掘需求、赢得信任」<br>换行业 → 风生水起
+          </p>
+        </div>
+      </div>
+      <div class="quote-block" style="max-width: 900px; margin: 2rem auto 0; text-align: center;">
+        "一个人为什么可以迁移？<br>
+        因为他此前在<span class="highlight">探路</span>。"
+      </div>
+    </div>
+
+    <!-- 11: FINAL INSIGHT -->
+    <div class="slide" data-slide="10">
+      <div class="highlight-box" style="max-width: 1100px; margin: 0 auto; text-align: center;">
+        <h2 style="margin-top: 0; margin-bottom: 2rem;">80亿人，只有80万条路</h2>
+        <p style="font-size: 1.75rem; line-height: 1.8; margin-top: 1.5rem;">
+          绝大多数人一辈子在游戏之外，<br>
+          <span class="text-muted">甚至没意识到这80万条路的存在</span>。<br><br>
+          条条大路通罗马，但条条大路上人都很稀疏，<br>
+          <strong class="text-brand">意识到罗马是怎么去的人</strong>，本身就没几个。
+        </p>
+      </div>
+      <div class="quote-block" style="max-width: 800px; margin: 2rem auto 0; text-align: center;">
+        "没有探过路的人生，不足以道人生。<br>
+        探路才是过日子，探树只是在观摩别人的日子。"
+      </div>
+    </div>
+
+    <!-- 12: PAPER - Recap -->
+    <div class="slide" data-slide="11">
+      <div style="position: absolute; top: 2rem; left: 3rem; right: 3rem; display: flex; justify-content: space-between; font-family: 'JetBrains Mono'; font-size: 0.75rem; color: rgba(255,255,255,0.4);">
+        <span>核心公式</span>
+        <span>13 / 21</span>
+      </div>
+      <div style="max-width: 1000px; margin: 0 auto; padding-top: 3rem;">
+        <h2 style="margin-bottom: 2.5rem;">三大公式总结</h2>
+        <div class="col-2" style="gap: 2rem;">
+          <div style="background: var(--card-bg); padding: 2rem; border-radius: 16px; border-left: 4px solid var(--accent);">
+            <h3 style="color: var(--accent); margin-top: 0;">公式一：测试覆盖</h3>
+            <p style="font-size: 1.5rem; margin: 1rem 0; font-family: 'JetBrains Mono';">
+              <strong>Test Coverage ≥ 2 × Career Years</strong>
+            </p>
+            <p style="font-size: 0.9375rem; color: rgba(255,255,255,0.6);">
+              投资30年 → 至少60年数据（含极端周期）<br>
+              职业30年 → 观察60年行业变迁
+            </p>
+          </div>
+          <div style="background: var(--card-bg); padding: 2rem; border-radius: 16px; border-left: 4px solid var(--brand);">
+            <h3 style="color: var(--brand); margin-top: 0;">公式二：收益模型</h3>
+            <p style="font-size: 1.5rem; margin: 1rem 0; font-family: 'JetBrains Mono';">
+              <strong>收益 = f(算法模型)</strong>
+            </p>
+            <p style="font-size: 0.9375rem; color: rgba(255,255,255,0.6);">
+              不是本金大小的问题<br>
+              是「吃鸡」还是「吃饲料」的区别
+            </p>
+          </div>
+          <div style="background: var(--card-bg); padding: 2rem; border-radius: 16px; border-left: 4px solid var(--accent); grid-column: span 2; max-width: 100%;">
+            <h3 style="color: var(--accent); margin-top: 0;">公式三：能力本质</h3>
+            <p style="font-size: 1.5rem; margin: 1rem 0; font-family: 'JetBrains Mono';">
+              <strong>认知 = 探路（路径组合）</strong><br>
+              <strong>知识 = 探树（元素堆砌）</strong>
+            </p>
+            <p style="font-size: 0.9375rem; color: rgba(255,255,255,0.6);">
+              探路 → 可迁移的能力 → 跨界成功<br>
+              探树 → 只能当字典/垫脚石
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 13: ACTION -->
+    <div class="slide" data-slide="12">
+      <h2 style="text-align: center; margin-bottom: 3rem;">今晚，你可以...</h2>
+      <div class="col-3" style="max-width: 1100px; margin: 0 auto;">
+        <div class="data-card" onclick="openModal('modal-action1')">
+          <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>
+          <h3 style="font-size: 1.125rem; margin-bottom: 0.5rem;">自检三问</h3>
+          <p style="font-size: 0.9375rem;">
+            • 我在探树还是探路？<br>
+            • 我吃饲料还是吃鸡？<br>
+            • 我产出矿石还是艺术品？
+          </p>
+        </div>
+        <div class="data-card" onclick="openModal('modal-action2')">
+          <div style="font-size: 2rem; margin-bottom: 0.5rem;">📊</div>
+          <h3 style="font-size: 1.125rem; margin-bottom: 0.5rem;">画一张图</h3>
+          <p style="font-size: 0.9375rem;">
+            测试覆盖周期：<br>
+            <span style="font-family: 'JetBrains Mono';">observed years / career years</span><br>
+            比例 < 2:1 → 立即分仓
+          </p>
+        </div>
+        <div class="data-card" onclick="openModal('modal-action3')">
+          <div style="font-size: 2rem; margin-bottom: 0.5rem;">🚀</div>
+          <h3 style="font-size: 1.125rem; margin-bottom: 0.5rem;">找一条路</h3>
+          <p style="font-size: 0.9375rem;">
+            选一个领域，写出<br>
+            <strong>A → D 密码串</strong><br>
+            带着问题去习，不是学
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 14: CLOSING -->
+    <div class="slide slide-cover" data-slide="13">
+      <div>
+        <h1 class="giant-text mb-3">探路而非探树</h1>
+        <p class="quote-block" style="max-width: 800px; margin: 2rem auto; font-size: 1.125rem;">
+          人类财富围绕<span class="highlight">路</span>定义，而不是围绕<span class="highlight">树</span>。<br>
+          资本市场奖励的是<span class="highlight">探路过的人</span>，哪怕只是阶段性走通。
+        </p>
+        <div style="margin-top: 3rem; font-family: 'JetBrains Mono'; font-size: 0.875rem; color: rgba(255,255,255,0.4);">
+          道法术器拆解 · 5个思维误区 · 贝贝
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Modals (All Dark Theme) -->
+  <div class="modal-overlay" id="modal1">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('modal1')">×</button>
+      <div class="modal-body">
+        <h2>40万样本与5个误区</h2>
+        <p>作者分析了<span style="color: var(--accent); font-weight: 600;">几十万条读者留言</span>，发现即便每一篇都看，依然很多人没理解。<br>用春节假期全部拎出来，提炼共性，得出5个思维误区。</p>
+        <div class="modal-highlight-box">
+          <h4 style="color: var(--brand); margin-bottom: 0.75rem;">数据背后的警示</h4>
+          <ul>
+            <li><strong>1/10 测试覆盖</strong>：火鸡只测了生命周期的十分之一</li>
+            <li><strong>0% 容错率</strong>：满仓意味着一次错误就致命</li>
+            <li><strong>80万条路</strong>：80亿人只有不到80万条可行之路</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal2">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('modal2')">×</button>
+      <div class="modal-body">
+        <h2>满仓 = 零容错</h2>
+        <p>火鸡科学家是满仓的——它押的是命。<br><br>
+        你把整个身家压在一个行业、一个岗位、一套技能树上。<br>
+        <strong style="color: var(--accent);">辛辛苦苦淘汰所有同事，结果整个行业消失了。</strong></p>
+        <div style="margin-top: 1.5rem; padding: 1.5rem; background: rgba(255,107,107,0.08); border-left: 4px solid var(--accent); border-radius: 0 12px 12px 0;">
+          <p style="margin: 0; font-style: italic; color: rgba(255,255,255,0.7);">
+            "回溯测试是回溯测试，分仓是分仓，这是两件事。<br>
+            一块积木 ≠ 城堡。"
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-barbell-trad">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('modal-barbell-trad')">×</button>
+      <div class="modal-body">
+        <h2>火鸡模式：吃饲料</h2>
+        <p>承担<span style="color: var(--accent); font-weight: 700;">364天</span>的风险，就为了第365天吃饲料。<br>
+        大部分本金都在场上，每天承受波动，期望缓慢上涨。</p>
+        <div class="modal-highlight-box">
+          <strong style="color: var(--accent);">收益 = f(本金 × 缓慢增长率)</strong><br>
+          <span>收益确实和本金成正比，但风险极高。一旦遇到感恩节（黑天鹅），满仓者必死。</span>
+        </div>
+        <p>这就是为什么传统金融需要<span style="color: var(--accent);">止损、杠杆、盈亏比</span>——因为你大部分身家在赌。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-barbell-right">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('modal-barbell-right')">×</button>
+      <div class="modal-body">
+        <h2>杠铃策略：吃鸡</h2>
+        <p><strong class="text-brand">只承担1天风险</strong>——等感恩节那天，把倒霉火鸡抓住吃掉。<br><br>
+        用极小本金（如3个月工资），在极端事件发生时获取超高回报。<br>
+        乌龙指：7折买入错误定价资产，一秒内转手卖出，<strong>不持仓、不隔夜、无利息</strong>。</p>
+        <div class="modal-highlight-box">
+          <strong style="color: var(--brand);">收益 = f(算法模型 × 极端盈亏比)</strong><br>
+          <span>1万本金 × 100倍杠杆 × 3年一遇 → 净赚30万。唯一风险：交易所倒闭。</span>
+        </div>
+        <p><strong class="text-brand">塔勒布杠铃：</strong>90%囤物资（稳定），10%分100份赌爆炸增长。<br>
+        <em>本质相同：用极小仓位，博超大盈亏比。</em></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-transfer-fail">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('modal-transfer-fail')">×</button>
+      <div class="modal-body">
+        <h2>知识迁移失败</h2>
+        <p style="margin-bottom: 1.5rem;">可口可乐技术专家转型销售：</p>
+        <p style="color: var(--accent); font-size: 1.125rem; line-height: 1.8;">
+          「我懂糖水配方、营销套路」<br>
+          换品类 → 抓瞎
+        </p>
+        <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+          <p style="margin: 0; font-size: 0.9375rem; color: rgba(255,255,255,0.6);">
+            <strong>问题</strong>：他只带着「知识点」（树）换行业，没有带走「探路能力」（路）。<br><br>
+            <strong>探树者</strong>的产出是初级农产品——可替代性强，换个场景就用不上。
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-transfer-success">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('modal-transfer-success')">×</button>
+      <div class="modal-body">
+        <h2>能力迁移成功</h2>
+        <p style="margin-bottom: 1.5rem;">优秀老师转型销售：</p>
+        <p style="color: var(--brand); font-size: 1.125rem; line-height: 1.8;">
+          「我懂挖掘需求、赢得信任」<br>
+          换行业 → 风生水起
+        </p>
+        <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+          <p style="margin: 0; font-size: 0.9375rem; color: rgba(255,255,255,0.6);">
+            <strong>关键</strong>：他带走的是「探路能力」——如何解决问题、与人连接、达成目标。<br><br>
+            <strong>探路者</strong>的产出是深加工产品——跨场景依然有价值。
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-action1">
+    <div class="modal-content" style="max-width: 700px;">
+      <button class="modal-close" onclick="closeModal('modal-action1')">×</button>
+      <div class="modal-body">
+        <h2>自检三问</h2>
+        <div style="background: rgba(0,212,170,0.08); padding: 1.25rem; border-radius: 12px; margin-bottom: 1rem;">
+          <strong style="color: var(--brand);">1. 我在探树还是探路？</strong><br>
+          <span style="font-size: 0.9375rem; color: rgba(255,255,255,0.6);">
+            我是「收集知识点」还是「打通路径」？产出是「元素」还是「可落地的解决方案」？
+          </span>
+        </div>
+        <div style="background: rgba(255,107,107,0.08); padding: 1.25rem; border-radius: 12px; margin-bottom: 1rem;">
+          <strong style="color: var(--accent);">2. 我吃饲料还是吃鸡？</strong><br>
+          <span style="font-size: 0.9375rem; color: rgba(255,255,255,0.6);">
+            「大部分本金在场」追求缓慢增长 vs 「极小仓位」博极端事件？
+          </span>
+        </div>
+        <div style="background: rgba(0,212,170,0.08); padding: 1.25rem; border-radius: 12px;">
+          <strong style="color: var(--brand);">3. 我产出矿石还是艺术品？</strong><br>
+          <span style="font-size: 0.9375rem; color: rgba(255,255,255,0.6);">
+            提供「原材料」（知识搬运） vs 提供「深加工产品」（路径组合）？
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-action2">
+    <div class="modal-content" style="max-width: 700px;">
+      <button class="modal-close" onclick="closeModal('modal-action2')">×</button>
+      <div class="modal-body">
+        <h2>画一张图</h2>
+        <p style="margin-bottom: 1.5rem;">评估你的「测试覆盖周期」：</p>
+        <div style="text-align: center; background: rgba(0,0,0,0.3); padding: 2rem; border-radius: 12px; margin: 1.5rem 0; border: 1px solid rgba(255,255,255,0.05);">
+          <div style="font-size: 1.5rem; font-weight: 700; color: var(--brand); margin-bottom: 0.5rem;">
+            Test Coverage = Observed Years / Career Years
+          </div>
+          <p style="font-size: 1rem; color: rgba(255,255,255,0.5);">
+            你观察了多少年行业历史 ÷ 你计划从业多少年
+          </p>
+        </div>
+        <p><strong style="color: var(--accent);">比例 &lt; 2:1 → 立即停止ALL IN，开始分仓</strong><br>
+        <span style="font-size: 0.9375rem; color: rgba(255,255,255,0.6);">
+          投资30年 → 至少60年数据（含战争、萧条、技术革命）<br>
+          职业30年 → 观察60年行业变迁（含颠覆性变革）
+        </span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-action3">
+    <div class="modal-content" style="max-width: 700px;">
+      <button class="modal-close" onclick="closeModal('modal-action3')">×</button>
+      <div class="modal-body">
+        <h2>找一条路</h2>
+        <p style="margin-bottom: 1.5rem;">选择一个你自认为「懂」的领域，写出<strong style="color: var(--brand);">A → D 密码串</strong>：</p>
+        <ul style="padding-left: 1.25rem; color: rgba(255,255,255,0.75); margin: 1.5rem 0;">
+          <li><strong>A</strong>：原始问题（你想解决什么？）</li>
+          <li><strong>B</strong>：尝试过的方案（踩过什么坑？）</li>
+          <li><strong>C</strong>：卡点在哪里（为什么走不通？）</li>
+          <li><strong>D</strong>：最终解决方案（如何打通？）</li>
+        </ul>
+        <div style="padding: 1.5rem; background: rgba(0,212,170,0.08); border-radius: 12px;">
+          <strong style="color: var(--brand);">关键：带着「解决问题」的目标去习，不是「学习知识」。</strong><br>
+          <span style="font-size: 0.9375rem; color: rgba(255,255,255,0.6);">
+            如果答案只是「我知道很多关于这个领域的信息」，那你还在探树。<br>
+            如果你能说清「我是如何一步步从A走到D的」，你才开始探路。
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============= Comet Trail Cursor Effect =============
+    const cursorDot = document.getElementById('cursorDot');
+    const trailCanvas = document.getElementById('trailCanvas');
+    const tCtx = trailCanvas.getContext('2d');
+
+    // Debug counter
+    let frameCount = 0;
+    let lastLogTime = Date.now();
+
+    let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+    let trail = [];
+    const maxTrail = 100;
+
+    function resizeTrail() {
+      trailCanvas.width = window.innerWidth;
+      trailCanvas.height = window.innerHeight;
+    }
+    resizeTrail();
+    window.addEventListener('resize', resizeTrail);
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      cursorDot.style.left = mouseX - 3 + 'px';
+      cursorDot.style.top = mouseY - 3 + 'px';
+
+      // Add particles
+      const particleCount = Math.min(6, Math.max(2, Math.floor(Math.random() * 4 + 2)));
+      for (let i = 0; i < particleCount; i++) {
+        if (trail.length < maxTrail) {
+          const hue = (Date.now() / 60 + Math.random() * 45) % 360;
+          trail.push({
+            x: mouseX + (Math.random() - 0.5) * 12,
+            y: mouseY + (Math.random() - 0.5) * 12,
+            size: Math.random() * 3 + 1.5,
+            life: 1,
+            decay: Math.random() * 0.015 + 0.008,
+            vx: (Math.random() - 0.5) * 0.8,
+            vy: (Math.random() - 0.5) * 0.8,
+            hue: hue
+          });
+        }
+      }
+    });
+
+    function animateTrail() {
+      frameCount++;
+
+      // Debug: log every 5 seconds
+      if (Date.now() - lastLogTime > 5000) {
+        console.log(`Trail particles: ${trail.length}, frames: ${frameCount}`);
+        lastLogTime = Date.now();
+      }
+
+      tCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+
+      trail = trail.filter(p => p.life > 0);
+
+      // Hard limit - never exceed
+      if (trail.length > maxTrail) {
+        trail = trail.slice(-maxTrail);
+      }
+
+      trail.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= p.decay;
+
+        if (p.life <= 0) return;
+
+        const alpha = p.life * 0.8;
+        const size = p.size * p.life;
+
+        // Optimized: use arc instead of radial gradient for performance
+        // Simple glow with shadow
+        tCtx.save();
+        tCtx.shadowBlur = size * 2;
+        tCtx.shadowColor = `hsla(${p.hue}, 100%, 60%, ${alpha})`;
+
+        tCtx.fillStyle = `hsla(${p.hue}, 100%, 70%, ${alpha * 0.3})`;
+        tCtx.beginPath();
+        tCtx.arc(p.x, p.y, size * 2, 0, Math.PI * 2);
+        tCtx.fill();
+
+        tCtx.fillStyle = `hsla(${p.hue}, 100%, 90%, ${alpha})`;
+        tCtx.beginPath();
+        tCtx.arc(p.x, p.y, size * 0.5, 0, Math.PI * 2);
+        tCtx.fill();
+
+        tCtx.restore();
+      });
+
+      requestAnimationFrame(animateTrail);
+    }
+    animateTrail();
+
+    console.log('Comet trail animation started');
+
+    // Hover effects
+    const hoverElements = document.querySelectorAll('.data-card, .skew-card, .timeline-node');
+    hoverElements.forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursorDot.style.transform = 'scale(2)';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursorDot.style.transform = 'scale(1)';
+      });
+    });
+
+    // Add indicator to interactive elements
+    document.querySelectorAll('.data-card, .skew-card, .nav-btn, .toc-dot').forEach(el => {
+      el.style.cursor = 'none';
+    });
+
+    // Burst particles on click - fireworks effect
+    document.addEventListener('click', (e) => {
+      for (let i = 0; i < 25; i++) {
+        const hue = Math.random() * 360;
+        const angle = (Math.PI * 2 * i) / 25;
+        const speed = Math.random() * 7 + 4;
+        trail.push({
+          x: e.clientX,
+          y: e.clientY,
+          size: Math.random() * 3 + 2,
+          life: 1,
+          decay: Math.random() * 0.018 + 0.012,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          hue: hue
+        });
+      }
+    });
+
+    // ============= TOC & Navigation =============
+    const toc = document.getElementById('toc');
+    document.querySelectorAll('.slide').forEach((slide, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'toc-dot' + (i === 0 ? ' active' : '');
+      dot.onclick = () => goToSlide(i);
+      toc.appendChild(dot);
+    });
+
+    let currentSlide = 0;
+    const totalSlides = 14;
+
+    function updateNav() {
+      document.getElementById('counter').textContent = `${String(currentSlide + 1).padStart(2, '0')} / ${String(totalSlides).padStart(2, '0')}`;
+      document.getElementById('prevBtn').disabled = currentSlide === 0;
+      document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+      document.querySelectorAll('.toc-dot').forEach((dot, i) => {
+        dot.classList.toggle('active', i === currentSlide);
+      });
+    }
+
+    function goToSlide(index) {
+      if (index < 0 || index >= totalSlides) return;
+      document.querySelectorAll('.slide').forEach((slide, i) => {
+        slide.classList.toggle('active', i === index);
+        slide.classList.toggle('blurred', i !== index && document.querySelectorAll('.modal-overlay.active').length > 0);
+      });
+      currentSlide = index;
+      updateNav();
+
+      // GSAP entrance
+      const active = document.querySelector('.slide.active');
+      gsap.fromTo(active.querySelectorAll('h1, h2, h3, p, ul, .data-card, .quote-block, .timeline-node, .skew-card'),
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.7, stagger: 0.06, ease: 'power2.out', delay: 0.15 }
+      );
+    }
+
+    function nextSlide() { if (currentSlide < totalSlides - 1) goToSlide(currentSlide + 1); }
+    function prevSlide() { if (currentSlide > 0) goToSlide(currentSlide - 1); }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+      else if (e.key === 'ArrowLeft') prevSlide();
+      if (e.key === 'Escape') closeAllModals();
+    });
+
+    // Wheel navigation
+    let wheelLock = false;
+    document.addEventListener('wheel', (e) => {
+      if (wheelLock) return;
+      if (document.querySelectorAll('.modal-overlay.active').length > 0) {
+        e.preventDefault();
+        return;
+      }
+      wheelLock = true;
+      e.preventDefault();
+      if (e.deltaY > 0) nextSlide();
+      else if (e.deltaY < 0) prevSlide();
+      setTimeout(() => wheelLock = false, 800);
+    }, { passive: false });
+
+    // ============= Modal System =============
+    function openModal(id) {
+      const modal = document.getElementById(id);
+      if (!modal) return;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      document.querySelectorAll('.slide.active').forEach(slide => slide.classList.add('blurred'));
+    }
+
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (!modal) return;
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+      document.querySelectorAll('.slide').forEach(slide => slide.classList.remove('blurred'));
+    }
+
+    function closeAllModals() {
+      document.querySelectorAll('.modal-overlay.active').forEach(modal => modal.classList.remove('active'));
+      document.querySelectorAll('.slide').forEach(slide => slide.classList.remove('blurred'));
+      document.body.style.overflow = '';
+    }
+
+    document.querySelectorAll('.modal-overlay').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal(modal.id);
+      });
+    });
+
+    // ============= Init =============
+    updateNav();
+    goToSlide(0);
+  </script>
+
+  <!-- Background Particles Script -->
+  <script>
+    // ============= Background Particle System =============
+    const bgCanvas = document.getElementById('bgParticles');
+    const bgCtx = bgCanvas.getContext('2d');
+
+    let bgParticles = [];
+    const maxBgParticles = 60;
+
+    function resizeBg() {
+      bgCanvas.width = window.innerWidth;
+      bgCanvas.height = window.innerHeight;
+    }
+    resizeBg();
+    window.addEventListener('resize', resizeBg);
+
+    // Initialize background particles
+    for (let i = 0; i < maxBgParticles; i++) {
+      bgParticles.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        size: Math.random() * 2 + 0.5,
+        life: Math.random() * 0.5 + 0.5,
+        maxLife: Math.random() * 0.5 + 0.5,
+        decay: Math.random() * 0.001 + 0.0005,
+        vx: (Math.random() - 0.5) * 0.15,
+        vy: (Math.random() - 0.5) * 0.15,
+        hue: Math.random() > 0.5 ? 160 + Math.random() * 40 : 330 + Math.random() * 30 // Cyan or pink-red
+      });
+    }
+
+    function animateBg() {
+      bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+      bgParticles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= p.decay;
+
+        // Reset dead particles
+        if (p.life <= 0) {
+          p.x = Math.random() * bgCanvas.width;
+          p.y = Math.random() * bgCanvas.height;
+          p.life = p.maxLife;
+          p.vx = (Math.random() - 0.5) * 0.15;
+          p.vy = (Math.random() - 0.5) * 0.15;
+        }
+
+        const alpha = p.life * 0.4;
+        const size = p.size;
+
+        bgCtx.fillStyle = `hsla(${p.hue}, 70%, 60%, ${alpha})`;
+        bgCtx.beginPath();
+        bgCtx.arc(p.x, p.y, size, 0, Math.PI * 2);
+        bgCtx.fill();
+
+        // Subtle glow
+        if (size > 1) {
+          bgCtx.fillStyle = `hsla(${p.hue}, 70%, 70%, ${alpha * 0.3})`;
+          bgCtx.beginPath();
+          bgCtx.arc(p.x, p.y, size * 2, 0, Math.PI * 2);
+          bgCtx.fill();
+        }
+      });
+
+      requestAnimationFrame(animateBg);
+    }
+    animateBg();
+  </script>
+</body>
+</html>
